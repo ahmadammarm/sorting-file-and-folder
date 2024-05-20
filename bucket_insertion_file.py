@@ -13,11 +13,11 @@ def initialize_buckets(files):
     if len(files) == 0:
         return [], 0, 0
 
-    # Find the minimum and maximum size to determine the range of file sizes
+    # Menemukan ukuran minimum dan maksimum untuk menentukan kisaran ukuran file
     max_size = max(files, key=lambda x: x[1])[1]
     min_size = min(files, key=lambda x: x[1])[1]
 
-    # Create buckets with appropriate ranges
+    # Membuat bucket dengan rentang yang sesuai
     bucket_count = len(files)
     bucket_range = (max_size - min_size) / bucket_count
     buckets = [[] for _ in range(bucket_count)]
@@ -27,21 +27,18 @@ def initialize_buckets(files):
 def distribute_files_to_buckets(files, buckets, min_size, bucket_range):
     bucket_count = len(buckets)
     
-    # Distribute files into buckets based on their size
+    # Mendistribusikan file ke dalam bucket berdasarkan ukurannya
     for file in files:
         index = int((file[1] - min_size) / bucket_range)
         if index >= bucket_count:
-            index = bucket_count - 1  # Ensure the maximum size file goes into the last bucket
+            index = bucket_count - 1  # Memastikan file berukuran maksimal masuk ke bucket terakhir
         buckets[index].append(file)
-
-def sort_buckets(buckets):
-    pass
 
 def bucket_sort(files):
     buckets, min_size, bucket_range = initialize_buckets(files)
     distribute_files_to_buckets(files, buckets, min_size, bucket_range)
         
-    # Concatenate the files in each bucket (not sorted yet)
+    # Menggabungkan file di setiap bucket (file belum terurut)
     sorted_files = []
     for bucket in buckets:
         sorted_files.extend(bucket)
@@ -61,7 +58,7 @@ def sort_files_by_size(folder_path):
     files = get_files_with_sizes(folder_path)
     sorted_files, buckets, min_size, bucket_range = bucket_sort(files)
     
-    # Sort files using insertion sort after bucket sort
+    # Mengurutkan file menggunakan insertion sort setelah pengurutan bucket
     insertion_sort(sorted_files)
     
     return sorted_files, buckets, min_size, bucket_range
@@ -76,7 +73,7 @@ def save_buckets_to_txt(buckets, min_size, bucket_range, output_file_path):
             for filename, size in bucket:
                 file.write(f"  {filename}: {size} bytes\n")
             
-            # Retrieve sorted bucket
+            # Mengambil bucket yang telah diurutkan
             sorted_bucket = sorted(bucket, key=lambda x: x[1])
             file.write("\nSorted:\n")
             for filename, size in sorted_bucket:
@@ -94,16 +91,16 @@ if __name__ == "__main__":
     folder_path = r'C:\Users\USER\Downloads'
     sorted_files, buckets, min_size, bucket_range = sort_files_by_size(folder_path)
 
-    # Print sorted files
+    # Menampilkan file yang telah terurut
     for filename, size in sorted_files:
         print(f"{filename}: {size} bytes")
 
-    # Save sorted files to a text file
-    sorted_output_file_path = "sorted_files.txt"
+    # Menyimpan tampilan file yang telah terurut di file txt
+    sorted_output_file_path = "sorted_files_bucket_insertion.txt"
     save_sorted_files_to_txt(sorted_files, sorted_output_file_path)
     print(f"Sorted file list saved to {sorted_output_file_path}")
 
-    # Save bucket details to a text file
-    buckets_output_file_path = "buckets_details.txt"
+    # Menyimpan detail bucket ke dalam file txt
+    buckets_output_file_path = "buckets_details_insertion.txt"
     save_buckets_to_txt(buckets, min_size, bucket_range, buckets_output_file_path)
     print(f"Buckets details saved to {buckets_output_file_path}")
